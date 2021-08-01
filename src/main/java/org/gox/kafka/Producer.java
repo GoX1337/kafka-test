@@ -38,25 +38,28 @@ public class Producer {
         }
     }
 
-    public static void createProducerThread(String clientId, String prefix, int delay){
-        new Thread(() -> {
+    public static Thread createProducerThread(String clientId, int delay){
+        return new Thread(() -> {
             Producer producer = new Producer(clientId);
             try {
                 int i = 0;
                 while(true) {
-                    producer.sendEvent(0, prefix + "-" + i++ + " " + LocalDateTime.now());
+                    producer.sendEvent(0, clientId + "-" + i++ + " " + LocalDateTime.now());
                     Thread.sleep(delay);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 
     public static void main(String[] args){
-        createProducerThread("producer-1", "hi", 1000);
-        createProducerThread("producer-2", "hello", 1000);
-        createProducerThread("producer-3", "hiyo", 1000);
-    }
+        Thread producer1 = createProducerThread("producer-1", 1000);
+        Thread producer2 = createProducerThread("producer-2", 1000);
+        Thread producer3 = createProducerThread("producer-3", 1000);
 
+        producer1.start();
+        producer2.start();
+        producer3.start();
+    }
 }
